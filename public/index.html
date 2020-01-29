@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Hello, WebVR! - A-Frame</title>
+        <meta name="description" content="Hello, WebVR! - A-Frame">
+        <script src="https://aframe.io/releases/1.0.3/aframe.min.js"></script>
+        <script src="/js/spherical-env-map.js"></script>
+
+        <!-- CREATE AND DESTROY COMPONENTS -->
+        <script src="/js/create-portal-component.js"></script>
+        <script src="/js/create-portal-component2.js"></script>
+        <script src="/js/create-portal-component3.js"></script>
+        <script src="/js/create-portal-component4.js"></script>
+        <script src="/js/remove-component.js"></script>
+    </head>
+    <body>
+        <!-- SCENE -->
+        <a-scene shadow="type:basic;">
+                <a-assets timeout="3000">
+
+                    <!-- CHROME REFLECTIVE TEXTURE-->
+                    <img crossorigin="anonymous" id="chrome" src="/assets/textures/chrome.jpg">
+
+                    <!-- SKYMAPS FOR VARIOUS LOCATIONS -->
+                    <img crossorigin="anonymous" id="skymap" src="/assets/textures/darkcity.png">
+                    <img crossorigin="anonymous" id="skymap2" src="/assets/textures/scene3.pjpg">
+
+                    <!-- PORTAL GUN -->
+                    <a-asset-item crossorigin="anonymous" id="portalGun" src="/assets/models/portalGun.obj"></a-asset-item>
+                    <a-asset-item crossorigin="anonymous" id="gunTexture" src="/assets/textures/portalGun.mtl"></a-asset-item>
+
+                    <!-- PORTAL -->
+                    <img crossorigin="anonymous" id="port" src="/assets/textures/portal.png">
+
+                    <!-- IMPORT AUDIO FILE -->
+                    <a-asset-item crossorigin="anonymous" id="create-sound" src="/assets/sound/gunSound.mp3" response-type="arraybuffer"></a-asset-item>
+
+                </a-assets>
+
+                <!-- CREATE BASE -->
+                <a-entity               id="plane" geometry="primitive:plane; width:5; height:5;" 
+                                        position="0 -1 0" rotation="-90 0 0" 
+                                        shadow="receive:true;" 
+                                        material="color:#FFFFFF; sphericalEnvMap:#skymap; roughness:0.5; metalness:0.0;"></a-entity>
+
+                <!-- PLACE GUNS: guns encircle spawn point -->
+                <!-- FRONT FACING -->
+                <a-obj-model    src="#portalGun" mtl="#gunTexture" class="clickable"
+                                create-portal-component position="0 2 -6" rotation="0 0 30" scale="0.1 0.1 0.1"
+                                remove-component shadow="cast:true; receive:true;" spherical-env-map="src:#chrome;"
+                                animation="property:rotation; to:0 360 30; loop:true; easing:linear; dur:10000;"></a-obj-model>
+                <!-- BEHIND -->
+                <a-obj-model    src="#portalGun" mtl="#gunTexture" class="clickable"
+                                create-portal-component2 position="0 2 6" rotation="0 0 30" scale="0.1 0.1 0.1"
+                                shadow="cast:true; receive:true;" spherical-env-map="src:#chrome;"
+                                animation="property:rotation; to:0 360 30; loop:true; easing:linear; dur:10000;"></a-obj-model>
+                <!-- RIGHT -->
+                <a-obj-model    src="#portalGun" mtl="#gunTexture" class="clickable"
+                                create-portal-component3 position="6 2 0" rotation="0 90 30" scale="0.1 0.1 0.1"
+                                shadow="cast:true; receive:true;" spherical-env-map="src:#chrome;"
+                                animation="property:rotation; to:0 450 30; loop:true; easing:linear; dur:10000;"></a-obj-model>
+                <!-- LEFT -->
+                <a-obj-model    src="#portalGun" mtl="#gunTexture" class="clickable"
+                                create-portal-component4 position="-6 2 0" rotation="0 90 30" scale="0.1 0.1 0.1"
+                                shadow="cast:true; receive:true;" spherical-env-map="src:#chrome;"
+                                animation="property:rotation; to:0 450 30; loop:true; easing:linear; dur:10000;"></a-obj-model>
+
+                <!-- WASD CONTROLS -->
+                <a-entity position="0 1.6 0 " camera look-controls wasd-controls>
+                    <a-entity   raycaster="far:10; interval:100; objects:.clickable"
+                                cursor="fuse:false; fuseTimeout:500; rayOrigin:mouse;"
+                                position="0 0 -1"
+                                material="shader:flat; color:black;" >
+                    </a-entity>
+                </a-entity>
+
+                <!-- CREATE SKY SPHERE -->
+                <a-entity   id="sky"
+                            geometry="primitive:sphere; radius:500;"
+                            material="shader:flat; src:/assets/textures/desertSky.jpg; side:back; height:2048; width:2048"></a-entity>
+
+                <!-- LIGHTING -->
+                <a-entity light="type:directional; castShadow:true; intensity:0.6; shadowBias:-0.000001; shadowMapWidth:1024; shadowMapHeight:1024;" position="-0.5 1 1"></a-entity>
+                <a-entity light="type: ambient; intensity: 1.0; color:#bbb;"></a-entity>
+
+                <!-- SOUND EFFECT -->
+                <a-entity id="createSound" sound="src:#create-sound"></a-entity>
+
+        </a-scene>
+    </body>
+</html>
